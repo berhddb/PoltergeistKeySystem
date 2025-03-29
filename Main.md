@@ -2,9 +2,9 @@
 local Library = {}
 
 -- Função para criar janela
-function Library:CreateWindow(options)
+function Library:CreateWindow(hubName)
 	local PoltergeistHub = Instance.new("ScreenGui")
-	PoltergeistHub.Name = options.Name or "Window"
+	PoltergeistHub.Name = "PoltergeistLibrary"
 	PoltergeistHub.ResetOnSpawn = false
 	PoltergeistHub.IgnoreGuiInset = true
 	PoltergeistHub.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
@@ -42,7 +42,7 @@ function Library:CreateWindow(options)
 	Title.TextSize = 14
 	Title.Size = UDim2.new(0.40, 0.00, 0.38, 0.00)
 	Title.BorderColor3 = Color3.new(0.00, 0.00, 0.00)
-	Title.Text = "POLTERGEIST HUB"
+	Title.Text = hubName
 	Title.TextColor3 = Color3.new(0.39, 0.65, 0.94)
 	Title.BackgroundTransparency = 1
 	Title.Position = UDim2.new(0.00, 0.00, 0.50, 0.00)
@@ -231,8 +231,6 @@ function Library:CreateWindow(options)
 
 	local Gradient = Instance.new("UIGradient")
 	Gradient.Name = "Gradient"
-	Gradient.Transparency = NumberSequence.new(NumberSequenceKeypoint.new(0.00, 0.05, 0.00), NumberSequenceKeypoint.new(1.00, 0.05, 0.00))
-	Gradient.Color = ColorSequence.new(ColorSequenceKeypoint.new(0.00, Color3.new(1.00, 1.00, 1.00)), ColorSequenceKeypoint.new(1.00, Color3.new(0.95, 0.78, 0.78)))
 	Gradient.Offset = Vector2.new(0.00, 0.58)
 	Gradient.Rotation = 70
 	Gradient.Parent = Template
