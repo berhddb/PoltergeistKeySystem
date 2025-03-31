@@ -10,7 +10,7 @@ function Library:CreateKeySystem()
 	PoltergeistKeySystem.IgnoreGuiInset = true
 	PoltergeistKeySystem.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 	PoltergeistKeySystem.ScreenInsets = Enum.ScreenInsets.DeviceSafeInsets
-	PoltergeistKeySystem.Parent = game:GetService("StarterGui")
+	PoltergeistKeySystem.Parent = game.Players.LocalPlayer.PlayerGui
 
 	local Notifications = Instance.new("Frame")
 	Notifications.Name = "Notifications"
