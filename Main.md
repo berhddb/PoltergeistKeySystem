@@ -3,6 +3,7 @@ local Library = {}
 
 -- Função para criar aba
 function Library:CreateKeySystem()
+
 	-- Gui to Lua
 	-- Version: 3.2
 
@@ -81,7 +82,7 @@ function Library:CreateKeySystem()
 	local TextSize_7 = Instance.new("UITextSizeConstraint")
 
 	--Properties:
-	
+
 	PoltergeistKeySystem.Name = "PoltergeistKeySystem"
 	PoltergeistKeySystem.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 	PoltergeistKeySystem.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
@@ -113,7 +114,6 @@ function Library:CreateKeySystem()
 	CanvasGroup.Position = UDim2.new(0.5, 0, 0.499153972, 0)
 	CanvasGroup.Size = UDim2.new(0.557617962, 0, 0.781049132, 0)
 	CanvaUIScale.Parent = CanvasGroup
-	
 	Topbar.Name = "Topbar"
 	Topbar.Parent = CanvasGroup
 	Topbar.BackgroundColor3 = Color3.fromRGB(39, 39, 39)
@@ -613,7 +613,7 @@ function Library:CreateKeySystem()
 	TextSize_7.Name = "TextSize"
 	TextSize_7.Parent = KeyStatus
 	TextSize_7.MaxTextSize = 30
-	
+
 	local Template = Instance.new("CanvasGroup")
 	Template.Name = "Template"
 	Template.BorderSizePixel = 0
@@ -735,207 +735,202 @@ function Library:CreateKeySystem()
 	Scale.Name = "Scale"
 	Scale.Scale = 0.2
 	Scale.Parent = Template
-	
+
 	-- Scripts:
 
-		local tweenService = game:GetService("TweenService")
+	local tweenService = game:GetService("TweenService")
 
-		function animateFrame(scale, frame_uiScale)
-			tweenService:Create(frame_uiScale, TweenInfo.new(0.25, Enum.EasingStyle.Sine), {
-				Scale = scale
-			}):Play()
-		end
+	function animateFrame(scale, frame_uiScale)
+		tweenService:Create(frame_uiScale, TweenInfo.new(0.25, Enum.EasingStyle.Sine), {
+			Scale = scale
+		}):Play()
+	end
 
-		Close.MouseButton1Up:Connect(function()
-			animateFrame(0, CanvasGroup:WaitForChild('UIScale'))
-			task.wait(0.3)
-			PoltergeistKeySystem:Destroy()
+	Close.MouseButton1Up:Connect(function()
+		animateFrame(0, CanvasGroup:WaitForChild('UIScale'))
+		task.wait(0.3)
+		PoltergeistKeySystem:Destroy()
 
 		local tweenService = game:GetService("TweenService")
 		local loginInProgress = false -- Variável para evitar múltiplos cliques
+	end)
+	-- Função para animar o scale da UI
+	local function scale(scale, frame_uiScale)
+		tweenService:Create(frame_uiScale, TweenInfo.new(0.25, Enum.EasingStyle.Sine), {
+			Scale = scale
+		}):Play()
+	end
+
+	-- Função para exibir notificações
+	local function showNotification(title, message, duration)
+		local template = Template:Clone()
+		template.Parent = Notifications
+		template.Frame.Title.Text = title
+		template.Frame.Description.Text = message
+		scale(1, template:WaitForChild("Scale"))
+
+		-- Barra de progresso
+		template.Timer:TweenSize(UDim2.new(0, 0, 0, 2), Enum.EasingDirection.In, Enum.EasingStyle.Sine, duration, true)
+
+		-- Aguarda o tempo da notificação e a remove
+		task.delay(duration, function()
+			scale(0.2, template:WaitForChild("Scale"))
+			task.wait(0.24)
+			template:Destroy()
 		end)
-		-- Função para animar o scale da UI
-		local function scale(scale, frame_uiScale)
-			tweenService:Create(frame_uiScale, TweenInfo.new(0.25, Enum.EasingStyle.Sine), {
-				Scale = scale
-			}):Play()
-		end
+	end
 
-		-- Função para exibir notificações
-		local function showNotification(title, message, duration)
-			local template = Template:Clone()
-			template.Parent = Notifications
-			template.Frame.Title.Text = title
-			template.Frame.Description.Text = message
-			scale(1, template:WaitForChild("Scale"))
+	-- Lista de usuários e senhas
+	local Users = {
+		["bernx"] = {
+			password = "lobinho10",
+			hasKey = true
+		},
+		["nikhdd1"] = {
+			password = "lobinho11",
+			hasKey = false
+		},
+	}
 
-			-- Barra de progresso
-			template.Timer:TweenSize(UDim2.new(0, 0, 0, 2), Enum.EasingDirection.In, Enum.EasingStyle.Sine, duration, true)
-
-			-- Aguarda o tempo da notificação e a remove
-			task.delay(duration, function()
-				scale(0.2, template:WaitForChild("Scale"))
-				task.wait(0.24)
-				template:Destroy()
-			end)
-		end
-
-		-- Lista de usuários e senhas
-		local Users = {
-			["bernx"] = {
-				password = "lobinho10",
-				hasKey = true
-			},
-			["nikhdd1"] = {
-				password = "lobinho11",
-				hasKey = false
-			},
+	-- Lista de chaves manualmente definidas e longas
+	local Keys = {
+		["sdjoWasdAVZS321aasdjzxASVBYU4r23tc"] = {
+			assignedAccount = "bernx"
+		},
+		["GvbsdfjVXNGR23456erTTw234lkjsdk7f8"] = {
+			assignedAccount = "nikhdd1"
 		}
+	}
 
-		-- Lista de chaves manualmente definidas e longas
-		local Keys = {
-			["sdjoWasdAVZS321aasdjzxASVBYU4r23tc"] = {
-				assignedAccount = "bernx"
-			},
-			["GvbsdfjVXNGR23456erTTw234lkjsdk7f8"] = {
-				assignedAccount = "nikhdd1"
-			}
-		}
+	local loggedInUser = nil -- Armazena o usuário logado
 
-		local loggedInUser = nil -- Armazena o usuário logado
+	Login.Login.MouseButton1Up:Connect(function()
+		if loginInProgress then return end -- Impede múltiplos cliques
+		loginInProgress = true
 
-		Login.Login.MouseButton1Up:Connect(function()
-			if loginInProgress then return end -- Impede múltiplos cliques
-			loginInProgress = true
+		local username = Login.AccountName.TextBox.Text
+		local password = Login.AccountPassword.TextBox.Text
 
-			local username = Login.AccountName.TextBox.Text
-			local password = Login.AccountPassword.TextBox.Text
+		if username ~= "" and password ~= "" then
+			if Users[username] then
+				if Users[username].password == password then
+					loggedInUser = username
+					showNotification("Success", "Login successful!", 2)
+					task.wait(1)
+					Login.Visible = false
+					Key.Visible = true
+					Key.Title.Text = 'WELCOME BACK, ' .. username
 
-			if username ~= "" and password ~= "" then
-				if Users[username] then
-					if Users[username].password == password then
-						loggedInUser = username
-						showNotification("Success", "Login successful!", 2)
-						task.wait(1)
-						Login.Visible = false
-						Key.Visible = true
-						Key.Title.Text = 'WELCOME BACK, ' .. username
-
-						-- Removendo o Key Mode e atualizando o Key Status
-						Navigation.KeyStatus.Text = 'Key Status: VALID'
-						-- Alterando a cor para verde (para indicar que está válido)
-						Navigation.KeyStatus.TextColor3 = Color3.fromRGB(0, 255, 0)
-
-						-- Verificando se o usuário tem chave
-						if Users[username].hasKey then
-							Key.Key.Visible = false
-							Key.UseKey.Visible = false
-						else
-							Navigation.KeyStatus.Text = 'Key Status: EXPIRED'
-							-- Alterando a cor para vermelho (para indicar que está expirado)
-							Navigation.KeyStatus.TextColor3 = Color3.fromRGB(255, 0, 0)
-						end
-						Navigation:TweenSize(UDim2.new(1, 0, 0.113, 0), Enum.EasingDirection.In, Enum.EasingStyle.Sine, 0.4)
-					else
-						showNotification("Error", "Incorrect password.", 2)
-					end
-				else
-					showNotification("Error", "Username does not exist.", 2)
-				end
-			else
-				showNotification("Error", "Please fill in all fields.", 2)
-			end
-
-			task.wait(1.5) -- Tempo mínimo para evitar spam
-			loginInProgress = false
-		end)
-
-		Key.UseKey.MouseButton1Up:Connect(function()
-			if not loggedInUser then
-				showNotification("Error", "You must be logged in to activate a key.", 2)
-				return
-			end
-
-			local key = Key.Key.TextBox.Text
-
-			if Keys[key] then
-				-- Verifica se a chave corresponde à conta do usuário
-				if Keys[key].assignedAccount == loggedInUser then
-					Users[loggedInUser].hasKey = true
-					showNotification("Success", "Key activated successfully!", 2)
-					Key.Key.Visible = false
-					Key.UseKey.Visible = false
+					-- Removendo o Key Mode e atualizando o Key Status
 					Navigation.KeyStatus.Text = 'Key Status: VALID'
 					-- Alterando a cor para verde (para indicar que está válido)
 					Navigation.KeyStatus.TextColor3 = Color3.fromRGB(0, 255, 0)
+
+					-- Verificando se o usuário tem chave
+					if Users[username].hasKey then
+						Key.Key.Visible = false
+						Key.UseKey.Visible = false
+					else
+						Navigation.KeyStatus.Text = 'Key Status: EXPIRED'
+						-- Alterando a cor para vermelho (para indicar que está expirado)
+						Navigation.KeyStatus.TextColor3 = Color3.fromRGB(255, 0, 0)
+					end
+					Navigation:TweenSize(UDim2.new(1, 0, 0.113, 0), Enum.EasingDirection.In, Enum.EasingStyle.Sine, 0.4)
 				else
-					showNotification("Error", "This key is not assigned to your account.", 2)
+					showNotification("Error", "Incorrect password.", 2)
 				end
 			else
-				showNotification("Error", "Invalid key.", 2)
+				showNotification("Error", "Username does not exist.", 2)
 			end
-		end)
+		else
+			showNotification("Error", "Please fill in all fields.", 2)
+		end
 
-		Navigation.MainLoader.MouseButton1Up:Connect(function()
-			if not loggedInUser or not Users[loggedInUser].hasKey then
-				showNotification("Error", "You need a valid key to proceed.", 2)
-				return
+		task.wait(1.5) -- Tempo mínimo para evitar spam
+		loginInProgress = false
+	end)
+
+	Key.UseKey.MouseButton1Up:Connect(function()
+		if not loggedInUser then
+			showNotification("Error", "You must be logged in to activate a key.", 2)
+			return
+		end
+
+		local key = Key.Key.TextBox.Text
+
+		if Keys[key] then
+			-- Verifica se a chave corresponde à conta do usuário
+			if Keys[key].assignedAccount == loggedInUser then
+				Users[loggedInUser].hasKey = true
+				showNotification("Success", "Key activated successfully!", 2)
+				Key.Key.Visible = false
+				Key.UseKey.Visible = false
+				Navigation.KeyStatus.Text = 'Key Status: VALID'
+				-- Alterando a cor para verde (para indicar que está válido)
+				Navigation.KeyStatus.TextColor3 = Color3.fromRGB(0, 255, 0)
+			else
+				showNotification("Error", "This key is not assigned to your account.", 2)
 			end
+		else
+			showNotification("Error", "Invalid key.", 2)
+		end
+	end)
 
-			-- Oculta a GUI com animação
-			scale(0.2, CanvasGroup:FindFirstChild("Scale"))
-			task.wait(0.3) -- Pequena espera para a animação terminar
+	Navigation.MainLoader.MouseButton1Up:Connect(function()
+		if not loggedInUser or not Users[loggedInUser].hasKey then
+			showNotification("Error", "You need a valid key to proceed.", 2)
+			return
+		end
 
-			-- Remove a GUI da memória
-			PoltergeistKeySystem:Destroy()
+		task.wait(0.3)
+		PoltergeistKeySystem.Enabled = true
 
-			-- Carrega e executa o MainLoader
-			local success, response = pcall(function()
-				return loadstring(game:HttpGet("https://raw.githubusercontent.com/berhddb/PoltergeistHub-Mainloader/refs/heads/main/Mainloader"))()
-			end)
+		local gameid = game.GameId
+		local supportedGames = {
+			[2753915549] = "https://raw.githubusercontent.com/berhddb/PoltergeistHub/refs/heads/main/bloxfruits?token=GHSAT0AAAAAAC63RFAQ44QG4Z54ITZ3ZFIAZ5OKXRA", -- Blox Fruits
+			[5569032992] = "https://raw.githubusercontent.com/jaonoobao/Poltergeist-Hub-DW-loader/refs/heads/main/README.md" -- DW (Dandy's World)
+		}
 
-			-- Caso haja erro ao carregar o script
-			if not success then
-				warn("Failed to load MainLoader: " .. tostring(response))
-				showNotification("Error", "Failed to load MainLoader.", 3)
-			end
-		end)
-		
-	-- Made by Real_IceyDev (@lceyDex) --
-	-- Simple UI dragger (PC Only/Any device that has a mouse) --
+		if supportedGames[gameid] then
+			loadstring(game:HttpGet(supportedGames[gameid], true))()
+		else
+			showNotification("Error", "Game not supported.", 3)
+		end
 
-	local UIS = game:GetService('UserInputService')
+		showNotification("MainLoader", "Loading MainLoader.", 3)
+		task.wait(3.1)
+		PoltergeistKeySystem:Destroy()
+	end)
+
+	local UIS = game:GetService("UserInputService")
+	local TweenService = game:GetService("TweenService")
 	local frame = CanvasGroup
-	local dragToggle = nil
+	local dragToggle, dragStart, startPos
 	local dragSpeed = 0.25
-	local dragStart = nil
-	local startPos = nil
 
 	local function updateInput(input)
 		local delta = input.Position - dragStart
-		local position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X,
-			startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-		game:GetService('TweenService'):Create(frame, TweenInfo.new(dragSpeed), {Position = position}):Play()
+		local newPosition = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+		TweenService:Create(frame, TweenInfo.new(dragSpeed), {Position = newPosition}):Play()
 	end
 
 	frame.InputBegan:Connect(function(input)
-		if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then 
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then 
 			dragToggle = true
 			dragStart = input.Position
 			startPos = frame.Position
-			input.Changed:Connect(function()
-				if input.UserInputState == Enum.UserInputState.End then
-					dragToggle = false
-				end
-			end)
+		end
+	end)
+
+	frame.InputEnded:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then 
+			dragToggle = false
 		end
 	end)
 
 	UIS.InputChanged:Connect(function(input)
-		if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-			if dragToggle then
-				updateInput(input)
-			end
+		if (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) and dragToggle then
+			updateInput(input)
 		end
 	end)
 
