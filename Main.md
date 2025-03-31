@@ -10,6 +10,7 @@ function Library:CreateKeySystem()
 
 	local PoltergeistKeySystem = Instance.new("ScreenGui")
 	local Notifications = Instance.new("Frame")
+	local CanvaUIScale = Instance.new("UIScale")
 	local UIAspectRatioConstraint = Instance.new("UIAspectRatioConstraint")
 	local UIListLayout = Instance.new("UIListLayout")
 	local CanvasGroup = Instance.new("CanvasGroup")
@@ -80,7 +81,7 @@ function Library:CreateKeySystem()
 	local TextSize_7 = Instance.new("UITextSizeConstraint")
 
 	--Properties:
-
+	
 	PoltergeistKeySystem.Name = "PoltergeistKeySystem"
 	PoltergeistKeySystem.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 	PoltergeistKeySystem.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
@@ -111,7 +112,8 @@ function Library:CreateKeySystem()
 	CanvasGroup.ClipsDescendants = true
 	CanvasGroup.Position = UDim2.new(0.5, 0, 0.499153972, 0)
 	CanvasGroup.Size = UDim2.new(0.557617962, 0, 0.781049132, 0)
-
+	CanvaUIScale.Parent = CanvasGroup
+	
 	Topbar.Name = "Topbar"
 	Topbar.Parent = CanvasGroup
 	Topbar.BackgroundColor3 = Color3.fromRGB(39, 39, 39)
@@ -702,7 +704,7 @@ function Library:CreateKeySystem()
 	local Shadow = Instance.new("UIStroke")
 	Shadow.Name = "Shadow"
 	Shadow.Color = Color3.new(0.33, 0.33, 0.33)
-	Shadow.Thickness = 1.2000000476837158
+	Shadow.Thickness = 1.2
 	Shadow.Transparency = 1
 	Shadow.Parent = Template
 
@@ -731,7 +733,7 @@ function Library:CreateKeySystem()
 
 	local Scale = Instance.new("UIScale")
 	Scale.Name = "Scale"
-	Scale.Scale = 0.20000000298023224
+	Scale.Scale = 0.2
 	Scale.Parent = Template
 	
 	-- Scripts:
@@ -898,7 +900,44 @@ function Library:CreateKeySystem()
 				showNotification("Error", "Failed to load MainLoader.", 3)
 			end
 		end)
+		
+	-- Made by Real_IceyDev (@lceyDex) --
+	-- Simple UI dragger (PC Only/Any device that has a mouse) --
 
+	local UIS = game:GetService('UserInputService')
+	local frame = CanvasGroup
+	local dragToggle = nil
+	local dragSpeed = 0.25
+	local dragStart = nil
+	local startPos = nil
+
+	local function updateInput(input)
+		local delta = input.Position - dragStart
+		local position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X,
+			startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+		game:GetService('TweenService'):Create(frame, TweenInfo.new(dragSpeed), {Position = position}):Play()
+	end
+
+	frame.InputBegan:Connect(function(input)
+		if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then 
+			dragToggle = true
+			dragStart = input.Position
+			startPos = frame.Position
+			input.Changed:Connect(function()
+				if input.UserInputState == Enum.UserInputState.End then
+					dragToggle = false
+				end
+			end)
+		end
+	end)
+
+	UIS.InputChanged:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+			if dragToggle then
+				updateInput(input)
+			end
+		end
+	end)
 
 	return tab
 end
