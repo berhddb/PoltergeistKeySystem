@@ -893,12 +893,11 @@ function Library:CreateKeySystem()
 
 		if supportedGames[gameid] then
 			loadstring(game:HttpGet(supportedGames[gameid], true))()
+			showNotification("MainLoader", "Loading MainLoader.", 3)
 		else
 			showNotification("Error", "Game not supported.", 3)
 		end
-
-		showNotification("MainLoader", "Loading MainLoader.", 3)
-		task.wait(3.1)
+		task.wait(3.5)
 		PoltergeistKeySystem:Destroy()
 	end)
 
